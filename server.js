@@ -41,8 +41,8 @@ app.get("/webhook", (req, res) => {
   res.send("Webhook endpoint ready (POST only)");
 });
 
-// รับรูปจาก ESP32
-app.post("/webhook", upload.single('image'), asyns (req, res) => {
+// รับรูปจาก ESP32 หรือ Postman
+app.post("/webhook", upload.single("image"), async (req, res) => {
   if (!req.file) {
     return res.status(400).send("No file uploaded");
   }
