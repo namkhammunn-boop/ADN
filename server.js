@@ -42,7 +42,7 @@ app.get("/webhook", (req, res) => {
 });
 
 // รับรูปจาก ESP32
-app.post("/webhook", upload.single("image"), (req, res) => {
+app.post("/webhook", upload.single('image'), asyns (req, res) => {
   if (!req.file) {
     return res.status(400).send("No file uploaded");
   }
