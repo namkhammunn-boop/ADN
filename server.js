@@ -1,3 +1,5 @@
+require("dotenv").config();
+
 const express = require("express");
 const multer = require("multer");
 const fs = require("fs");
@@ -7,56 +9,53 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 /* =========================
-   สร้างโฟลเดอร์ images ถ้ายังไม่มี
+   ตั้งค่าโฟลเดอร์เก็บไฟล์
 ========================= */
-const uploadPath = path.join(__dirname, "images");
+const uploadFolder = "uploads";
 
-if (!fs.existsSync(uploadPath)) {
-  fs.mkdirSync(uploadPath);
+if (!fs.existsSync(uploadFolder)) {
+  fs.mkdirSync(uploadFolder);
 }
 
-/* =========================
-   ตั้งค่า multer
-========================= */
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, uploadPath);
+    cb(null, uploadFolder);
   },
   filename: function (req, file, cb) {
-    cb(null, Date.now() + ".jpg");
-  },
+    const uniqueName = Date.now() + "-" + file.originalname;
+    cb(null, uniqueName);
+  }
 });
 
 const upload = multer({ storage: storage });
 
 /* =========================
-   route ทดสอบหน้าแรก
+   Routes
 ========================= */
+
+// หน้าแรก
 app.get("/", (req, res) => {
   res.send("Server is running");
 });
 
-/* =========================
-   route เช็ค webhook ผ่าน browser
-========================= */
+// ทดสอบผ่าน browser
 app.get("/webhook", (req, res) => {
   res.send("Webhook endpoint ready (POST only)");
 });
 
-/* =========================
-   route รับรูป
-========================= */
+// รับรูปจาก ESP32
 app.post("/webhook", upload.single("image"), (req, res) => {
   if (!req.file) {
     return res.status(400).send("No file uploaded");
   }
 
-  res.send("Upload success");
+  console.log("File received:", req.file.filename);
+  res.status(200).send("Image received successfully");
 });
 
 /* =========================
-   เปิด server
+   Start Server
 ========================= */
 app.listen(PORT, () => {
-  console.log("Server running on port " + PORT);
+  console.log(`Server running on port ${PORT}`);
 });
