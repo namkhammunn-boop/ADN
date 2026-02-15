@@ -4,8 +4,6 @@ const fs = require("fs");
 const path = require("path");
 
 const app = express();
-
-// ใช้ PORT ของ Render
 const PORT = process.env.PORT || 3000;
 
 /* =========================
@@ -32,10 +30,17 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 /* =========================
-   route ทดสอบ
+   route ทดสอบหน้าแรก
 ========================= */
 app.get("/", (req, res) => {
   res.send("Server is running");
+});
+
+/* =========================
+   route เช็ค webhook ผ่าน browser
+========================= */
+app.get("/webhook", (req, res) => {
+  res.send("Webhook endpoint ready (POST only)");
 });
 
 /* =========================
